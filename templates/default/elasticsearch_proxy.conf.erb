@@ -129,105 +129,105 @@ server {
 
 }
 
-# HTTPS server
-server {
-  listen 443;
-  server_name  <%= node.elasticsearch[:nginx][:host_name] %>;
-
-  ssl on;
-  ssl_certificate server.crt;
-  ssl_certificate_key server.key;
-
-  ssl_session_timeout 5m;
-
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
-
-  error_log   <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch-errors.log;
-  access_log  <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch.log;
-
-  location / {
-
-    # Deny Nodes Shutdown API
-    if ($request_filename ~ "_shutdown") {
-      return 404;
-      break;
-    }
-
-    if ($request_method = 'OPTIONS') {
-        # FYI: Elasticsearch adds the wildcard header - jaakko
-        add_header "Access-Control-Allow-Origin" *;
-        add_header 'Access-Control-Allow-Credentials' 'true';
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-
-        #
-        # Custom headers and headers various browsers *should* be OK with but aren't
-        #
-
-        add_header 'Access-Control-Allow-Headers' 'DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Accept, Origin';
-
-        #
-        # Tell client that this pre-flight info is valid for 20 days
-        #
-
-        add_header 'Access-Control-Max-Age' 1728000;
-        add_header 'Content-Type' 'text/plain charset=UTF-8';
-        add_header 'Content-Length' 0;
-
-        return 200;
-        break;
-    }
-
-    set $allowed_request FALSE;
-
-    # Read only
-    if ($request_method !~ ^(GET)$ ) {
-      set $allowed_request FALSE;
-    }
-
-    # Deny access to Cluster API
-    if ($request_filename ~ (_cluster|_refresh|_analyze|_percolator|_optimize|_bulk|_count|_river|_update|_create|_river|_plugin) ) {
-      set $allowed_request FALSE;
-      return 404;
-      break;
-    }
-
-    if ($request_filename ~ (_search|_mget)){
-      set $allowed_request TRUE;
-    }
-
-    if ( $allowed_request = FALSE ) {
-      return 404;
-      break;
-    }
-
-    # Pass requests to ElasticSearch
-    proxy_pass http://localhost:9200;
-    proxy_redirect off;
-
-    proxy_set_header  X-Real-IP  $remote_addr;
-    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header  Host $http_host;
-
-    # For CORS Ajax
-    proxy_pass_header Access-Control-Allow-Origin;
-    proxy_pass_header Access-Control-Allow-Methods;
-    proxy_hide_header Access-Control-Allow-Headers;
-    add_header Access-Control-Allow-Headers 'X-Requested-With, Content-Type';
-    add_header Access-Control-Allow-Credentials true;
-
-    error_page   404 444          /40x.html;
-    error_page   502 503 504 500  /50x.html;
-
-    location = /50x.html {
-      root /usr/share/nginx/www;
-    }
-
-    location = /40x.html {
-      root /usr/share/nginx/www;
-    }
-
-  }
-
-}
+## HTTPS server
+#server {
+#  listen 443;
+#  server_name  <%= node.elasticsearch[:nginx][:host_name] %>;
+#
+#  ssl on;
+#  ssl_certificate server.crt;
+#  ssl_certificate_key server.key;
+#
+#  ssl_session_timeout 5m;
+#
+#  ssl_protocols SSLv3 TLSv1;
+#  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+#  ssl_prefer_server_ciphers on;
+#
+#  error_log   <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch-errors.log;
+#  access_log  <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch.log;
+#
+#  location / {
+#
+#    # Deny Nodes Shutdown API
+#    if ($request_filename ~ "_shutdown") {
+#      return 404;
+#      break;
+#    }
+#
+#    if ($request_method = 'OPTIONS') {
+#        # FYI: Elasticsearch adds the wildcard header - jaakko
+#        add_header "Access-Control-Allow-Origin" *;
+#        add_header 'Access-Control-Allow-Credentials' 'true';
+#        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+#
+#        #
+#        # Custom headers and headers various browsers *should* be OK with but aren't
+#        #
+#
+#        add_header 'Access-Control-Allow-Headers' 'DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, X-Requested-#With, If-Modified-Since, Cache-Control, Content-Type, Accept, Origin';#
+#
+#        #
+#        # Tell client that this pre-flight info is valid for 20 days
+#        #
+#
+#        add_header 'Access-Control-Max-Age' 1728000;
+#        add_header 'Content-Type' 'text/plain charset=UTF-8';
+#        add_header 'Content-Length' 0;
+#
+#        return 200;
+#        break;
+#    }
+#
+#    set $allowed_request FALSE;
+#
+#    # Read only
+#    if ($request_method !~ ^(GET)$ ) {
+#      set $allowed_request FALSE;
+#    }
+#
+#    # Deny access to Cluster API
+#    if ($request_filename ~ (#_cluster|_refresh|_analyz#e|_percolator|_optimize|_bulk|_count|_river|_update|_create|_river|_plugin) ) {
+#      set $allowed_request FA#LSE;
+#      return 404;#
+#      break;#
+#    }#
+#
+#    if ($request_filename ~ (_search|_mget)){
+#      set $allowed_request TRUE;
+#    }
+#
+#    if ( $allowed_request = FALSE ) {
+#      return 404;
+#      break;
+#    }
+#
+#    # Pass requests to ElasticSearch
+#    proxy_pass http://localhost:9200;
+#    proxy_redirect off;
+#
+#    proxy_set_header  X-Real-IP  $remote_addr;
+#    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+#    proxy_set_header  Host $http_host;
+#
+#    # For CORS Ajax
+#    proxy_pass_header Access-Control-Allow-Origin;
+#    proxy_pass_header Access-Control-Allow-Methods;
+#    proxy_hide_header Access-Control-Allow-Headers;
+#    add_header Access-Control-Allow-Headers 'X-Requested-With, Content-Type';
+#    add_header Access-Control-Allow-Credentials true;
+#
+#    error_page   404 444          /40x.html;
+#    error_page   502 503 504 500  /50x.html;
+#
+#    location = /50x.html {
+#      root /usr/share/nginx/www;
+#    }
+#
+#    location = /40x.html {
+#      root /usr/share/nginx/www;
+#    }
+#
+#  }
+#
+#}
