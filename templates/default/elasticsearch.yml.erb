@@ -34,6 +34,7 @@ discovery.ec2.groups: '<%= node.elasticsearch[:cloud][:ec2][:security_group] %>'
 
 <% unless node.elasticsearch[:cloud][:aws].values.compact.empty? %>
 cloud.node.auto_attributes: true
+cloud.aws.region: <%= node.elasticsearch[:cloud][:aws][:region] %>'
 cloud.aws.access_key: '<%= node.elasticsearch[:cloud][:aws][:access_key] %>'
 cloud.aws.secret_key: '<%= node.elasticsearch[:cloud][:aws][:secret_key] %>'
 <% end %>
