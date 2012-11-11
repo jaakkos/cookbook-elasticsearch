@@ -3,7 +3,7 @@
 aws = Chef::DataBagItem.load('elasticsearch', 'aws') rescue {}
 # ----------------------------------------------------------------------
 
-default.elasticsearch[:plugin][:aws][:version] = '1.9.0'
+default.elasticsearch[:plugin][:aws][:version] = '1.9.11'
 default.elasticsearch[:plugins_mandatory] ||= []
 
 # === AWS ===
