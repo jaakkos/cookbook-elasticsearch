@@ -1,6 +1,6 @@
 server {
   listen      8088;
-  server_name search.merchii.com;
+  server_name <%= node.elasticsearch[:nginx][:host_name] %>;
 
   error_log   <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch-admin-errors.log;
   access_log  <%= node.elasticsearch[:nginx][:log_dir] %>/elasticsearch-admin.log;
